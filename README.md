@@ -1,5 +1,4 @@
--- SLOWLY SENSI V6.11 | BOTÃO FLUTUANTE COM LOGO SLOWLY XITER
-
+-- SLOWLY SENSI V6.17 | LEGIT DISGUISED & SMOOTH LOCKFIX
 local Players = game:GetService("Players")
 local RunService = game:GetService("RunService")
 local UserInputService = game:GetService("UserInputService")
@@ -14,7 +13,6 @@ local Camera = Workspace.CurrentCamera
 local RAW_ID = 134390937848624
 local DISCORD_LINK = "https://discord.gg/m6vmPpz4z8"
 
--- Aviso no chat ao injetar
 task.spawn(function()
     pcall(function()
         StarterGui:SetCore("ChatMakeSystemMessage", {
@@ -28,13 +26,17 @@ end)
 
 local Config = {
     AimbotEnabled = true,
-    Smoothness = 0,
+    Smoothness = 3, -- Ajustado para uma base mais fluida
     AimPart = "Head",
     WallCheck = false,
     TeamCheck = false,
+    MaxDistance = 500,
+    
+    -- Nova Opção de Disfarce (Legit)
+    DisguisedMode = false,
     
     FOVVisible = true,
-    FOVRadius = 180,
+    FOVRadius = 150,
     FOVColor = Color3.fromRGB(235, 0, 0),
     
     ESPEnabled = true,
@@ -50,14 +52,18 @@ local Config = {
 }
 
 local ScreenGui = Instance.new("ScreenGui")
-ScreenGui.Name = "SlowlySensiUI_ExactMatch"
+ScreenGui.Name = "SlowlySensiUI_LegitFix"
 ScreenGui.ResetOnSpawn = false
 if syn and syn.protect_gui then syn.protect_gui(ScreenGui) end
 ScreenGui.Parent = CoreGui:FindFirstChild("RobloxGui") or CoreGui
 
+local ESPContainer = Instance.new("Folder")
+ESPContainer.Name = "ESPContainerUI"
+ESPContainer.Parent = ScreenGui
+
 local MainFrame = Instance.new("Frame")
 MainFrame.Name = "MainFrame"
-MainFrame.Size = UDim2.new(0, 310, 0, 275)
+MainFrame.Size = UDim2.new(0, 310, 0, 335)
 MainFrame.Position = UDim2.new(0.05, 0, 0.25, 0)
 MainFrame.BackgroundColor3 = Color3.fromRGB(15, 15, 15)
 MainFrame.BorderSizePixel = 0
@@ -114,7 +120,7 @@ local TitleLabel = Instance.new("TextLabel")
 TitleLabel.Size = UDim2.new(0.8, 0, 1, 0)
 TitleLabel.Position = UDim2.new(0.04, 0, 0, 0)
 TitleLabel.BackgroundTransparency = 1
-TitleLabel.Text = "Slowly Sensi 1.108.X"
+TitleLabel.Text = "Slowly Sensi 1.109.X (Legit)"
 TitleLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
 TitleLabel.TextXAlignment = Enum.TextXAlignment.Left
 TitleLabel.Font = Enum.Font.SourceSansBold
@@ -138,14 +144,14 @@ local function ToggleMainFrame()
         MainFrame.Size = UDim2.new(0, 0, 0, 0)
         MainFrame.BackgroundTransparency = 1
         local tweenInfo = TweenInfo.new(0.25, Enum.EasingStyle.Quad, Enum.EasingDirection.Out)
-        TweenService:Create(MainFrame, tweenInfo, { Size = UDim2.new(0, 310, 0, 275), BackgroundTransparency = 0 }):Play()
+        TweenService:Create(MainFrame, tweenInfo, { Size = UDim2.new(0, 310, 0, 335), BackgroundTransparency = 0 }):Play()
     else
         local tweenInfo = TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.In)
         local tw = TweenService:Create(MainFrame, tweenInfo, { Size = UDim2.new(0, 0, 0, 0), BackgroundTransparency = 1 })
         tw:Play()
         tw.Completed:Connect(function()
             MainFrame.Visible = false
-            MainFrame.Size = UDim2.new(0, 310, 0, 275)
+            MainFrame.Size = UDim2.new(0, 310, 0, 335)
             MainFrame.BackgroundTransparency = 0
         end)
     end
@@ -502,15 +508,17 @@ local function AddThemeSelector(parent)
 end
 
 AddToggle(AimPage, "Ativar Aimbot", Config.AimbotEnabled, function(v) Config.AimbotEnabled = v end)
+AddToggle(AimPage, "Modo Disfarçado (Legit Clip)", Config.DisguisedMode, function(v) Config.DisguisedMode = v end)
 AddToggle(AimPage, "Exibir Circulo do FOV", Config.FOVVisible, function(v) Config.FOVVisible = v end)
-AddSlider(AimPage, "Smoothness", 0, 10, Config.Smoothness, function(v) Config.Smoothness = v end)
-AddSlider(AimPage, "Regular FOV", 30, 500, Config.FOVRadius, function(v) Config.FOVRadius = v end)
+AddSlider(AimPage, "Smoothness (Fluidez)", 1, 15, Config.Smoothness, function(v) Config.Smoothness = v end)
+AddSlider(AimPage, "Regular FOV", 30, 400, Config.FOVRadius, function(v) Config.FOVRadius = v end)
+AddSlider(AimPage, "Max Distância", 50, 1000, Config.MaxDistance, function(v) Config.MaxDistance = v end)
 AddTargetSelector(AimPage)
 AddToggle(AimPage, "Wall Check", Config.WallCheck, function(v) Config.WallCheck = v end)
 AddToggle(AimPage, "Team Check", Config.TeamCheck, function(v) Config.TeamCheck = v end)
 
 AddToggle(EspPage, "Ativar ESP Master", Config.ESPEnabled, function(v) Config.ESPEnabled = v end)
-AddToggle(EspPage, "Box ESP (Caixa 2D)", Config.BoxESP, function(v) Config.BoxESP = v end)
+AddToggle(EspPage, "Box ESP (Cantos 2D)", Config.BoxESP, function(v) Config.BoxESP = v end)
 AddToggle(EspPage, "Name ESP", Config.NameESP, function(v) Config.NameESP = v end)
 AddToggle(EspPage, "Health Bar (Verde)", Config.HealthESP, function(v) Config.HealthESP = v end)
 AddToggle(EspPage, "Skeleton ESP (Esqueleto)", Config.SkeletonESP, function(v) Config.SkeletonESP = v end)
@@ -526,7 +534,7 @@ AddThemeSelector(MiscPage)
 local InfoText = Instance.new("TextLabel")
 InfoText.Size = UDim2.new(1, 0, 0, 60)
 InfoText.BackgroundTransparency = 1
-InfoText.Text = "Slowly Sensi V6.11\nDesenvolvido por Slowly Scripts\n\nStatus: Indetectavel"
+InfoText.Text = "Slowly Sensi V6.17\nDesenvolvido por Slowly Scripts\n\nStatus: Indetectavel"
 InfoText.TextColor3 = Color3.fromRGB(200, 200, 200)
 InfoText.Font = Enum.Font.SourceSans
 InfoText.TextSize = 13
@@ -553,7 +561,7 @@ CopyDiscordBtn.MouseButton1Click:Connect(function()
         task.wait(2)
         CopyDiscordBtn.Text = "Copiar Link do Discord"
     else
-        CopyDiscordBtn.Text = "Executor sem suporte a setclipboard"
+        CopyDiscordBtn.Text = "Executor sem suporte"
         task.wait(2)
         CopyDiscordBtn.Text = "Copiar Link do Discord"
     end
@@ -568,9 +576,13 @@ local function IsVisible(targetPart)
     if not Config.WallCheck then return true end
     local origin = Camera.CFrame.Position
     local destination = targetPart.Position
-    local ignoreList = {LocalPlayer.Character, targetPart.Parent}
-    local parts = Camera:GetPartsObscuringTarget({origin, destination}, ignoreList)
-    return #parts == 0
+    local raycastParams = RaycastParams.new()
+    raycastParams.FilterType = Enum.RaycastFilterType.Exclude
+    raycastParams.FilterDescendantsInstances = {LocalPlayer.Character, targetPart.Parent}
+    raycastParams.IgnoreWater = true
+    
+    local result = Workspace:Raycast(origin, destination - origin, raycastParams)
+    return result == nil
 end
 
 local function GetTargetPart()
@@ -580,21 +592,28 @@ local function GetTargetPart()
 
     for _, p in ipairs(Players:GetPlayers()) do
         if p ~= LocalPlayer then
-            if not Config.TeamCheck or (p.Team ~= LocalPlayer.Team) then
+            local isTeam = (p.Team == LocalPlayer.Team)
+            if not Config.TeamCheck or not isTeam then
                 local char = p.Character
                 if char and char:FindFirstChild("Humanoid") and char.Humanoid.Health > 0 then
-                    local aimPart = char:FindFirstChild(Config.AimPart) 
-                    if not aimPart and Config.AimPart == "Torso" then
-                        aimPart = char:FindFirstChild("UpperTorso") or char:FindFirstChild("HumanoidRootPart")
-                    end
+                    local rootPart = char:FindFirstChild("HumanoidRootPart") or char:FindFirstChild("Torso")
+                    
+                    if rootPart and (rootPart.Position - Camera.CFrame.Position).Magnitude <= Config.MaxDistance then
+                        local aimPart = char:FindFirstChild(Config.AimPart) 
+                        if not aimPart and Config.AimPart == "Torso" then
+                            aimPart = char:FindFirstChild("UpperTorso") or rootPart
+                        end
 
-                    if aimPart and IsVisible(aimPart) then
-                        local screenPos, onScreen = Camera:WorldToViewportPoint(aimPart.Position)
-                        if onScreen then
-                            local dist = (Vector2.new(screenPos.X, screenPos.Y) - viewportCenter).Magnitude
-                            if dist < shortestDist then
-                                shortestDist = dist
-                                target = aimPart
+                        if aimPart then
+                            if IsVisible(aimPart) then
+                                local screenPos, onScreen = Camera:WorldToViewportPoint(aimPart.Position)
+                                if onScreen then
+                                    local dist = (Vector2.new(screenPos.X, screenPos.Y) - viewportCenter).Magnitude
+                                    if dist < shortestDist then
+                                        shortestDist = dist
+                                        target = aimPart
+                                    end
+                                end
                             end
                         end
                     end
@@ -609,21 +628,34 @@ local ESPObjects = {}
 
 local function CreateESP(player)
     local drawings = {
-        Box = Drawing.new("Square"),
+        BoxLines = {},
         Name = Drawing.new("Text"),
+        Distance = Drawing.new("Text"),
         HealthOutline = Drawing.new("Square"),
         HealthBar = Drawing.new("Square"),
         Skeleton = {}
     }
 
-    drawings.Box.Thickness = 1.5
-    drawings.Box.Filled = false
-    drawings.Box.Color = Config.ESPColor
+    for i = 1, 8 do
+        local line = Drawing.new("Line")
+        line.Thickness = 1.5
+        line.Color = Config.ESPColor
+        table.insert(drawings.BoxLines, line)
+    end
 
-    drawings.Name.Size = 13
+    drawings.Name.Size = 11
     drawings.Name.Center = true
     drawings.Name.Outline = true
+    drawings.Name.OutlineColor = Color3.fromRGB(0, 0, 0)
     drawings.Name.Color = Color3.fromRGB(255, 255, 255)
+    drawings.Name.Font = 2
+
+    drawings.Distance.Size = 11
+    drawings.Distance.Center = true
+    drawings.Distance.Outline = true
+    drawings.Distance.OutlineColor = Color3.fromRGB(0, 0, 0)
+    drawings.Distance.Color = Color3.fromRGB(255, 255, 255)
+    drawings.Distance.Font = 2
 
     drawings.HealthOutline.Thickness = 1
     drawings.HealthOutline.Filled = true
@@ -645,10 +677,10 @@ end
 
 local function RemoveESP(player)
     if ESPObjects[player] then
-        for _, obj in pairs(ESPObjects[player]) do
+        for k, obj in pairs(ESPObjects[player]) do
             if type(obj) == "table" then
-                for _, line in pairs(obj) do line:Remove() end
-            else
+                for _, line in pairs(obj) do if typeof(line) == "Instance" then line:Destroy() else line:Remove() end end
+            elseif typeof(obj) ~= "Instance" and obj.Remove then
                 obj:Remove()
             end
         end
@@ -673,22 +705,35 @@ local R6Bones = {
     {"Torso", "Left Leg"}, {"Torso", "Right Leg"}
 }
 
-RunService.RenderStepped:Connect(function()
+RunService.RenderStepped:Connect(function(dt)
     local center = Vector2.new(Camera.ViewportSize.X / 2, Camera.ViewportSize.Y / 2)
     FOVCircle.Position = center
-    FOVCircle.Radius = Config.FOVRadius
-    FOVCircle.Visible = Config.FOVVisible and Config.AimbotEnabled
+    FOVCircle.Radius = Config.DisguisedMode and (Config.FOVRadius * 0.7) or Config.FOVRadius
+    FOVCircle.Visible = Config.FOVVisible and Config.AimbotEnabled and not Config.DisguisedMode
     FOVCircle.Color = Config.FOVColor
 
     if Config.AimbotEnabled then
         local targetPart = GetTargetPart()
+        
+        -- Modo disfarçado: se o alvo estiver muito morto ou sumir, limpa o foco instantaneamente para não grudar no próximo
         if targetPart then
-            if Config.Smoothness == 0 then
-                Camera.CFrame = CFrame.new(Camera.CFrame.Position, targetPart.Position)
-            else
+            local char = targetPart.Parent
+            local hum = char and char:FindFirstChild("Humanoid")
+            if hum and hum.Health > 0 then
                 local targetCFrame = CFrame.new(Camera.CFrame.Position, targetPart.Position)
-                local lerpFactor = math.clamp(1 / (Config.Smoothness * 2), 0.02, 0.9)
-                Camera.CFrame = Camera.CFrame:Lerp(targetCFrame, lerpFactor)
+                
+                if Config.DisguisedMode then
+                    -- Ajuste super leve e humano para clipar sem parecer xita
+                    local smoothFactor = math.clamp(Config.Smoothness * 0.08, 0.1, 0.6)
+                    Camera.CFrame = Camera.CFrame:Lerp(targetCFrame, smoothFactor)
+                else
+                    if Config.Smoothness <= 1 then
+                        Camera.CFrame = CFrame.new(Camera.CFrame.Position, targetPart.Position)
+                    else
+                        local lerpFactor = math.clamp(1 / Config.Smoothness, 0.05, 1)
+                        Camera.CFrame = Camera.CFrame:Lerp(targetCFrame, lerpFactor)
+                    end
+                end
             end
         end
     end
@@ -696,7 +741,8 @@ RunService.RenderStepped:Connect(function()
     for player, drawings in pairs(ESPObjects) do
         local char = player.Character
         local isTeam = (player.Team == LocalPlayer.Team)
-        local shouldShow = Config.ESPEnabled and char and char:FindFirstChild("Humanoid") and char.Humanoid.Health > 0 and (not Config.ESPTeamCheck or not isTeam)
+        local teamCheckPassed = not Config.ESPTeamCheck or not isTeam
+        local shouldShow = Config.ESPEnabled and char and char:FindFirstChild("Humanoid") and char.Humanoid.Health > 0 and teamCheckPassed
 
         if shouldShow then
             local root = char:FindFirstChild("HumanoidRootPart") or char:FindFirstChild("Torso")
@@ -712,18 +758,56 @@ RunService.RenderStepped:Connect(function()
                     local boxWidth = boxHeight * 0.6
                     local boxPos = Vector2.new(rootPos.X - boxWidth / 2, rootPos.Y - boxHeight / 2)
 
-                    drawings.Box.Size = Vector2.new(boxWidth, boxHeight)
-                    drawings.Box.Position = boxPos
-                    drawings.Box.Visible = Config.BoxESP
+                    if Config.BoxESP then
+                        local lW = boxWidth / 4
+                        local lH = boxHeight / 4
+                        local lines = drawings.BoxLines
 
-                    drawings.Name.Text = player.Name
-                    drawings.Name.Position = Vector2.new(rootPos.X, boxPos.Y - 16)
-                    drawings.Name.Visible = Config.NameESP
+                        lines[1].From = boxPos
+                        lines[1].To = Vector2.new(boxPos.X + lW, boxPos.Y)
+                        lines[2].From = boxPos
+                        lines[2].To = Vector2.new(boxPos.X, boxPos.Y + lH)
+
+                        lines[3].From = Vector2.new(boxPos.X + boxWidth, boxPos.Y)
+                        lines[3].To = Vector2.new(boxPos.X + boxWidth - lW, boxPos.Y)
+                        lines[4].From = Vector2.new(boxPos.X + boxWidth, boxPos.Y)
+                        lines[4].To = Vector2.new(boxPos.X + boxWidth, boxPos.Y + lH)
+
+                        lines[5].From = Vector2.new(boxPos.X, boxPos.Y + boxHeight)
+                        lines[5].To = Vector2.new(boxPos.X + lW, boxPos.Y + boxHeight)
+                        lines[6].From = Vector2.new(boxPos.X, boxPos.Y + boxHeight)
+                        lines[6].To = Vector2.new(boxPos.X, boxPos.Y + boxHeight - lH)
+
+                        lines[7].From = Vector2.new(boxPos.X + boxWidth, boxPos.Y + boxHeight)
+                        lines[7].To = Vector2.new(boxPos.X + boxWidth - lW, boxPos.Y + boxHeight)
+                        lines[8].From = Vector2.new(boxPos.X + boxWidth, boxPos.Y + boxHeight)
+                        lines[8].To = Vector2.new(boxPos.X + boxWidth, boxPos.Y + boxHeight - lH)
+
+                        for _, l in ipairs(lines) do l.Visible = true end
+                    else
+                        for _, l in ipairs(drawings.BoxLines) do l.Visible = false end
+                    end
+
+                    if Config.NameESP then
+                        drawings.Name.Text = player.Name
+                        local centerX = boxPos.X + (boxWidth / 2)
+                        
+                        drawings.Name.Position = Vector2.new(centerX, boxPos.Y - 16)
+                        drawings.Name.Visible = true
+
+                        local distanceVal = math.floor((root.Position - Camera.CFrame.Position).Magnitude)
+                        drawings.Distance.Text = distanceVal .. " m"
+                        drawings.Distance.Position = Vector2.new(centerX, boxPos.Y + boxHeight + 2)
+                        drawings.Distance.Visible = true
+                    else
+                        drawings.Name.Visible = false
+                        drawings.Distance.Visible = false
+                    end
 
                     if Config.HealthESP then
                         local hum = char.Humanoid
                         local healthPercent = math.clamp(hum.Health / hum.MaxHealth, 0, 1)
-                        local barWidth = 3
+                        local barWidth = 2.5
                         local barHeight = boxHeight * healthPercent
 
                         drawings.HealthOutline.Size = Vector2.new(barWidth + 2, boxHeight + 2)
@@ -764,16 +848,18 @@ RunService.RenderStepped:Connect(function()
                         for _, line in ipairs(drawings.Skeleton) do line.Visible = false end
                     end
                 else
-                    drawings.Box.Visible = false
+                    for _, l in ipairs(drawings.BoxLines) do l.Visible = false end
                     drawings.Name.Visible = false
+                    drawings.Distance.Visible = false
                     drawings.HealthOutline.Visible = false
                     drawings.HealthBar.Visible = false
                     for _, line in ipairs(drawings.Skeleton) do line.Visible = false end
                 end
             end
         else
-            drawings.Box.Visible = false
+            for _, l in ipairs(drawings.BoxLines) do l.Visible = false end
             drawings.Name.Visible = false
+            drawings.Distance.Visible = false
             drawings.HealthOutline.Visible = false
             drawings.HealthBar.Visible = false
             for _, line in ipairs(drawings.Skeleton) do line.Visible = false end
